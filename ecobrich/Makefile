@@ -1,9 +1,9 @@
 build-DonateFunction:
-	set GOOS=linux&& set GOARCH=arm64&& go build -o bootstrap ./hello-world/main.go
-	copy bootstrap "$(ARTIFACTS_DIR)\bootstrap"
-	del bootstrap
+	GOOS=linux GOARCH=arm64 go build -o bootstrap ./donate/main.go
+	cp bootstrap $(ARTIFACTS_DIR)/
+	rm bootstrap
 
 build-ProfileFunction:
-	set GOOS=linux&& set GOARCH=arm64&& go build -o bootstrap ./hello-world/main.go
-	copy bootstrap "$(ARTIFACTS_DIR)\bootstrap"
-	del bootstrap
+	GOOS=linux GOARCH=arm64 go build -o bootstrap ./profile/main.go
+	cp bootstrap $(ARTIFACTS_DIR)/
+	rm bootstrap
