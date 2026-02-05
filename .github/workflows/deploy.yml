@@ -44,7 +44,9 @@ jobs:
             --stack-name ecobrich-stack \
             --capabilities CAPABILITY_IAM \
             --resolve-s3 \
-            --s3-prefix ecobrich-artifacts
+            --s3-prefix ecobrich-artifacts \
+            --region ap-southeast-1 \
+            --confirm-changeset False
             
   # --- JOB 2: DEPLOY FRONTEND (REACT TS) ---
   deploy-frontend:
