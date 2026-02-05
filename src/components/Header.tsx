@@ -13,7 +13,7 @@ export default function Header() {
         <div className="overlay" data-overlay></div>
         <Link to="/" className="logo">
           <img
-            src={`${import.meta.env.BASE_URL}Logo%20EB%20m%C3%A0u.png`}
+            src={`${import.meta.env.BASE_URL}LogoEBcolor.png`}
             width={60}
             height={60}
             alt="Ecobrick logo"

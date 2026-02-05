@@ -1,4 +1,5 @@
 import { Route, Routes } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -16,7 +17,7 @@ import Vouchers from './pages/Vouchers';
 import Admin from './pages/Admin';
 import { RewardsProvider } from './context/RewardsContext';
 import { Amplify } from 'aws-amplify';
-import { Authenticator } from '@aws-amplify/ui-react';
+import { signOut, getCurrentUser } from 'aws-amplify/auth';
 import '@aws-amplify/ui-react/styles.css';
 
 Amplify.configure({
@@ -28,42 +29,75 @@ Amplify.configure({
   }
 });
 
+// Protected route component
+function ProtectedRoute({ element }: { element: JSX.Element }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const currentUser = await getCurrentUser();
+      setUser(currentUser);
+      setIsAuthenticated(true);
+    } catch {
+      setIsAuthenticated(false);
+    }
+    setIsLoading(false);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsAuthenticated(false);
+    window.location.href = '/';
+  };
+
+  if (isLoading) return <div>Loading...</div>;
+  if (!isAuthenticated) return <Login />;
+
+  return (
+    <div style={{ background: '#ffffff', minHeight: '100vh', padding: '20px' }}>
+      <div style={{ textAlign: 'center', padding: '10px', background: '#f0f0f0', marginBottom: '20px' }}>
+        <span>Xin chào {user?.username}</span>
+        <button onClick={handleSignOut} style={{ marginLeft: '10px', padding: '5px 15px', cursor: 'pointer' }}>
+          Đăng xuất
+        </button>
+      </div>
+      {element}
+    </div>
+  );
+}
+
 export default function App() {
   return (
-    <Authenticator>
-      {({ signOut, user }) => (
-        <div style={{ background: '#ffffff', minHeight: '100vh', padding: '20px' }}>
-          <RewardsProvider>
-            <div className="app">
-              <Header />
-              <main className="main">
-                <div style={{ textAlign: 'center', padding: '10px', background: '#f0f0f0', marginBottom: '20px' }}>
-                  <span>Xin chào {user?.username}</span>
-                  <button onClick={signOut} style={{ marginLeft: '10px', padding: '5px 15px', cursor: 'pointer' }}>
-                    Đăng xuất
-                  </button>
-                </div>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/products/:slug" element={<ProductDetail />} />
-                  <Route path="/process" element={<Process />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/how-it-works" element={<HowItWorks />} />
-                  <Route path="/rewards" element={<Rewards />} />
-                  <Route path="/redeem" element={<Redeem />} />
-                  <Route path="/vouchers" element={<Vouchers />} />
-                  <Route path="/admin" element={<Admin />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                </Routes>
-              </main>
-              <Footer />
-            </div>
-          </RewardsProvider>
-        </div>
-      )}
-    </Authenticator>
+    <RewardsProvider>
+      <div className="app">
+        <Header />
+        <main className="main">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/products" element={<Products />} />
+            <Route path="/products/:slug" element={<ProductDetail />} />
+            <Route path="/process" element={<Process />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* Protected Routes */}
+            <Route path="/rewards" element={<ProtectedRoute element={<Rewards />} />} />
+            <Route path="/redeem" element={<ProtectedRoute element={<Redeem />} />} />
+            <Route path="/vouchers" element={<ProtectedRoute element={<Vouchers />} />} />
+            <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </RewardsProvider>
   );
 }
