@@ -1,0 +1,138 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Plastic Reward System - Serverless Backend
+  (Go, DynamoDB, Cognito, API Gateway)
+
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+    Runtime: provided.al2023 # Runtime tốt nhất cho Go hiện nay
+    Architectures:
+      - arm64 # Chạy trên chip Graviton rẻ hơn và nhanh hơn x86
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref PlasticDbTable
+
+Resources:
+  # ------------------------------------------------------------------
+  # 1. DYNAMODB TABLE (Single Table Design)
+  # ------------------------------------------------------------------
+  PlasticDbTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST # Tự động scale, không tốn tiền nếu ko có request
+
+  # ------------------------------------------------------------------
+  # 2. COGNITO USER POOL (Quản lý User)
+  # ------------------------------------------------------------------
+  PlasticUserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      UserPoolName: PlasticUserPool
+      AutoVerifiedAttributes:
+        - email
+      UsernameAttributes:
+        - email
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 8
+          RequireLowercase: true
+          RequireNumbers: true
+          RequireSymbols: false
+          RequireUppercase: true
+
+  # Client để React FE kết nối
+  PlasticUserPoolClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      ClientName: PlasticReactClient
+      UserPoolId: !Ref PlasticUserPool
+      GenerateSecret: false # React App (SPA) không giữ được secret nên set false
+      ExplicitAuthFlows:
+        - ALLOW_USER_SRP_AUTH
+        - ALLOW_REFRESH_TOKEN_AUTH
+
+  # ------------------------------------------------------------------
+  # 3. API GATEWAY (REST API)
+  # ------------------------------------------------------------------
+  PlasticApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors: # Cấu hình CORS để GitHub Pages gọi được
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'" # Sau này nên đổi thành domain GitHub Pages của bạn
+      Auth:
+        DefaultAuthorizer: CognitoAuthorizer
+        Authorizers:
+          CognitoAuthorizer:
+            UserPoolArn: !GetAtt PlasticUserPool.Arn
+
+  # ------------------------------------------------------------------
+  # 4. LAMBDA FUNCTIONS (Golang)
+  # ------------------------------------------------------------------
+  
+  # Function 1: Xử lý quyên góp (Donate)
+  DonateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: bootstrap # Go mới dùng handler tên bootstrap
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlasticDbTable
+      Events:
+        DonateApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PlasticApi
+            Path: /donate
+            Method: POST
+    Metadata:
+      BuildMethod: makefile
+
+  # Function 2: Lấy thông tin user & lịch sử (Profile)
+  ProfileFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: bootstrap
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref PlasticDbTable
+      Events:
+        GetProfileApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PlasticApi
+            Path: /profile
+            Method: GET
+    Metadata:
+      BuildMethod: makefile
+
+Outputs:
+  ApiEndpoint:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${PlasticApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  UserPoolId:
+    Description: "Cognito User Pool ID"
+    Value: !Ref PlasticUserPool
+  UserPoolClientId:
+    Description: "Cognito App Client ID"
+    Value: !Ref PlasticUserPoolClient
+  Region:
+    Description: "AWS Region"
+    Value: !Ref AWS::Region
