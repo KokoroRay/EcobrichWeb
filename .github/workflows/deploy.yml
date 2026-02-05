@@ -14,6 +14,7 @@ on:
       - 'public/**'
       - 'package.json'
       - 'vite.config.ts'
+      - 'vite.config.js'
       # Luôn chạy nếu sửa file CI/CD
       - '.github/workflows/**'
 
