@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="footer-container">
         <div className="footer-about">
           <img
-            src={`${import.meta.env.BASE_URL}Logo%20EB%20tr%E1%BA%AFng.png`}
+            src={`${import.meta.env.BASE_URL}LogoEBwhile.png`}
             alt="Ecobrick Logo"
             className="footer-logo"
           />

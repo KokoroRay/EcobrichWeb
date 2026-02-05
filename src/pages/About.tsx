@@ -17,7 +17,7 @@ export default function About() {
             </p>
           </div>
           <div className="about-image slide-right">
-            <img src="/images/Banner.jpg" alt="Ecobrick intro" />
+            <img src="/images/banner.jpg" alt="Ecobrick intro" />
           </div>
         </div>
       </section>
@@ -25,7 +25,7 @@ export default function About() {
       <section className="vision-section section-light">
         <div className="vision-container">
           <div className="vision-image slide-left">
-            <img src="/images/EcoTerrazzo%20Panel.jpg" alt="Ecobrick vision" />
+            <img src="/images/ecoterrazzo-panel.jpg" alt="Ecobrick vision" />
           </div>
           <div className="vision-text slide-right">
             <h2 className="section-title left">TẦM NHÌN</h2>
@@ -48,7 +48,7 @@ export default function About() {
             </p>
           </div>
           <div className="mission-image slide-right">
-            <img src="/images/HDPE.jpg" alt="Ecobrick mission" />
+            <img src="/images/hdpe.jpg" alt="Ecobrick mission" />
           </div>
         </div>
       </section>

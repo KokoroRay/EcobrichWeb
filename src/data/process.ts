@@ -11,27 +11,27 @@ export const processSteps: ProcessStep[] = [
     title: 'Thu gom nhựa',
     description:
       'Nhựa phế thải được thu gom từ hộ gia đình, khu dân cư và nhà máy để đảm bảo nguồn nguyên liệu ổn định.',
-    image: '/images/Banner.jpg',
+    image: '/images/banner.jpg',
   },
   {
     id: 'step-2',
     title: 'Phân loại & xử lý',
     description:
       'Nhựa được phân loại, làm sạch và loại bỏ tạp chất nhằm đảm bảo chất lượng cao cho sản phẩm cuối cùng.',
-    image: '/images/HDPE.jpg',
+    image: '/images/hdpe.jpg',
   },
   {
     id: 'step-3',
     title: 'Ép thành nhựa',
     description:
       'Nhựa sạch được nung chảy và ép thành các khối vật liệu bền chắc, sẵn sàng tạo hình.',
-    image: '/images/EcoTerrazzo%20Panel.jpg',
+    image: '/images/ecoterrazzo-panel.jpg',
   },
   {
     id: 'step-4',
     title: 'Hoàn thiện & lắp đặt',
     description:
       'Gia công bề mặt, kiểm định chất lượng và lắp đặt gạch cho các công trình xanh.',
-    image: '/images/Gạch%20Mosaic%20Xanh.jpg',
+    image: '/images/green-mosaic-tile.jpg',
   },
 ];

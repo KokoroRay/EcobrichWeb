@@ -20,7 +20,7 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-right">
-          <img src="/images/Banner.jpg" alt="Gạch lát từ rác nhựa" />
+          <img src="/images/banner.jpg" alt="Gạch lát từ rác nhựa" />
         </div>
       </section>
 
