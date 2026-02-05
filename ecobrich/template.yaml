@@ -1,93 +1,57 @@
-name: Deploy Ecobrich (Frontend & Backend)
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Plastic Reward System - Serverless Backend
 
-on:
-  push:
-    branches: 
-      - main
-      - 'feature/**'
-      - dev
-    paths:
-      - 'ecobrich/**'
-      - 'src/**'
-      - 'public/**'
-      - 'package.json'
-      - 'vite.config.ts'
-      - '.github/workflows/**'
+Globals:
+  Function:
+    Timeout: 10
+    MemorySize: 128
+    Runtime: provided.al2023
+    Architectures:
+      - arm64
+    Environment:
+      Variables:
+        TABLE_NAME: !Ref PlasticDbTable
 
-permissions:
-  contents: write
+Resources: # Dòng này phải sát lề trái
+  PlasticDbTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: PK
+          AttributeType: S
+        - AttributeName: SK
+          AttributeType: S
+      KeySchema:
+        - AttributeName: PK
+          KeyType: HASH
+        - AttributeName: SK
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
 
-jobs:
-  # --- JOB 1: DEPLOY BACKEND (AWS SAM) ---
-  deploy-backend:
-    # Chỉ chạy trên main (Production) hoặc dev (Development)
-    if: github.ref_name == 'main' || github.ref_name == 'dev'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+  PlasticApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
 
-      - name: Setup Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.21'
-
-      - name: Setup AWS SAM CLI
-        uses: aws-actions/setup-sam@v2
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-southeast-1
-
-      - name: Clean SAM Cache
-        working-directory: ./ecobrich
-        run: rm -rf .aws-sam
-
-      - name: SAM Build
-        working-directory: ./ecobrich
-        run: sam build
-
-      - name: SAM Deploy
-        working-directory: ./ecobrich
-        run: |
-          # Tự động chọn tên Stack: dev -> ecobrich-dev, main -> ecobrich-main
-          STACK_NAME=${{ github.ref_name == 'dev' && 'ecobrich-dev-stack' || 'ecobrich-stack' }}
-          sam deploy --stack-name $STACK_NAME \
-            --capabilities CAPABILITY_IAM \
-            --resolve-s3 \
-            --s3-prefix ecobrich-artifacts \
-            --region ap-southeast-1 \
-            --no-confirm-changeset \
-            --no-fail-on-empty-changeset
-            
-  # --- JOB 2: DEPLOY FRONTEND (REACT TS) ---
-  deploy-frontend:
-    # Chạy trên main HOẶC các nhánh feature/**
-    if: github.ref_name == 'main' || startsWith(github.ref, 'refs/heads/feature/')
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: './package-lock.json'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build project
-        env:
-          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL }}
-          VITE_COGNITO_USER_POOL_ID: ${{ secrets.VITE_COGNITO_USER_POOL_ID }}
-        run: npm run build
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+  DonateFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: . # Trỏ về gốc để thấy go.mod
+      Handler: bootstrap
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlasticDbTable
+      Events:
+        DonateApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PlasticApi
+            Path: /donate
+            Method: POST
+    Metadata:
+      BuildMethod: makefile
