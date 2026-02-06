@@ -99,7 +99,7 @@ export default function Rewards() {
             </div>
 
             {/* QR Code Card */}
-            <div className="profile-card" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+            <div className="profile-card qr-card" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
               <h4 style={{ marginBottom: '1rem', color: '#1e293b' }}>Mã thành viên của bạn</h4>
               <div style={{ background: 'white', padding: '10px', display: 'inline-block', borderRadius: '8px', border: '1px solid #eee' }}>
                 <QRCodeCanvas value={userAttributes?.sub || user?.username || 'unknown'} size={150} />
