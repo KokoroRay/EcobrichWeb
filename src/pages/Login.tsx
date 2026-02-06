@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { signIn, signInWithRedirect } from 'aws-amplify/auth';
+import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const successMessage = location.state?.message;
+  const { checkAuth } = useAuth();
+  const { showToast } = useToast();
   
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -28,6 +32,8 @@ export default function Login() {
 
     try {
       await signIn({ username: normalizedEmail, password });
+      await checkAuth(); // Update auth state
+      showToast('Đăng nhập thành công! Chào mừng bạn quay trở lại.', 'success');
       navigate('/rewards');
     } catch (err) {
       console.error('Login error:', err);

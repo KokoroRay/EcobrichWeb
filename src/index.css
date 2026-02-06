@@ -2085,3 +2085,258 @@ body {
   font-size: 0.85rem;
   font-weight: 600;
 }
+
+/* User Avatar Dropdown Styles */
+.user-menu {
+  position: relative;
+  display: inline-block;
+}
+
+.user-avatar-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #20803F 0%, #2a9d4f 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(32, 128, 63, 0.2);
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(32, 128, 63, 0.3);
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  min-width: 240px;
+  overflow: hidden;
+  z-index: 1001;
+  animation: dropdownFadeIn 0.2s ease;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-dropdown-header {
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+  background: linear-gradient(135deg, #f6f7f9 0%, #ffffff 100%);
+}
+
+.user-dropdown-header p {
+  margin: 0.25rem 0 0 0;
+  font-size: 0.85rem;
+  color: #666;
+  word-break: break-word;
+}
+
+.user-dropdown-header strong {
+  font-size: 0.95rem;
+  color: #2d2d2d;
+  font-weight: 600;
+}
+
+.user-dropdown-menu {
+  list-style: none;
+  padding: 0.5rem 0;
+  margin: 0;
+}
+
+.user-dropdown-menu li {
+  margin: 0;
+}
+
+.user-dropdown-menu li a {
+  display: block;
+  padding: 0.75rem 1rem;
+  color: #2d2d2d;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.user-dropdown-menu li a:hover {
+  background: #f6f7f9;
+  color: #20803F;
+  padding-left: 1.25rem;
+}
+
+.user-dropdown-logout {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-top: 1px solid #eee;
+  color: #dc3545;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.user-dropdown-logout:hover {
+  background: #fff5f5;
+  color: #c82333;
+}
+
+/* Toast Notification Styles */
+.toast-container {
+  position: fixed;
+  top: 88px;
+  right: 20px;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 400px;
+}
+
+.toast {
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: slideInRight 0.3s ease-out;
+  border-left: 4px solid;
+  min-width: 320px;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.toast.success {
+  border-left-color: #20803F;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9f4 100%);
+}
+
+.toast.error {
+  border-left-color: #dc3545;
+  background: linear-gradient(135deg, #ffffff 0%, #fff5f5 100%);
+}
+
+.toast.info {
+  border-left-color: #17a2b8;
+  background: linear-gradient(135deg, #ffffff 0%, #f0f9fb 100%);
+}
+
+.toast.warning {
+  border-left-color: #ffc107;
+  background: linear-gradient(135deg, #ffffff 0%, #fffbf0 100%);
+}
+
+.toast-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.875rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.toast.success .toast-icon {
+  background: #20803F;
+  color: white;
+}
+
+.toast.error .toast-icon {
+  background: #dc3545;
+  color: white;
+}
+
+.toast.info .toast-icon {
+  background: #17a2b8;
+  color: white;
+}
+
+.toast.warning .toast-icon {
+  background: #ffc107;
+  color: white;
+}
+
+.toast-message {
+  flex: 1;
+  font-size: 0.95rem;
+  color: #2d2d2d;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s ease;
+  flex-shrink: 0;
+}
+
+.toast-close:hover {
+  color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .toast-container {
+    right: 12px;
+    left: 12px;
+    max-width: none;
+  }
+  
+  .toast {
+    min-width: auto;
+  }
+  
+  .user-dropdown {
+    right: -12px;
+    min-width: 220px;
+  }
+}

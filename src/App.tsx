@@ -17,6 +17,8 @@ import Redeem from './pages/Redeem';
 import Vouchers from './pages/Vouchers';
 import Admin from './pages/Admin';
 import { RewardsProvider } from './context/RewardsContext';
+import { AuthProvider } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import { Amplify } from 'aws-amplify';
 import { signOut, getCurrentUser } from 'aws-amplify/auth';
 import '@aws-amplify/ui-react/styles.css';
@@ -93,31 +95,35 @@ function ProtectedRoute({ element }: { element: JSX.Element }) {
 
 export default function App() {
   return (
-    <RewardsProvider>
-      <div className="app">
-        <Header />
-        <main className="main">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/products/:slug" element={<ProductDetail />} />
-            <Route path="/process" element={<Process />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/how-it-works" element={<HowItWorks />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-                        <Route path="/forgot-password" element={<ForgotPassword />} />
-            
-            {/* Protected Routes */}
-            <Route path="/rewards" element={<ProtectedRoute element={<Rewards />} />} />
-            <Route path="/redeem" element={<ProtectedRoute element={<Redeem />} />} />
-            <Route path="/vouchers" element={<ProtectedRoute element={<Vouchers />} />} />
-            <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
-          </Routes>
-        </main>
-        <Footer />
-      </div>
-    </RewardsProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <RewardsProvider>
+          <div className="app">
+            <Header />
+            <main className="main">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/products" element={<Products />} />
+                <Route path="/products/:slug" element={<ProductDetail />} />
+                <Route path="/process" element={<Process />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/how-it-works" element={<HowItWorks />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                
+                {/* Protected Routes */}
+                <Route path="/rewards" element={<ProtectedRoute element={<Rewards />} />} />
+                <Route path="/redeem" element={<ProtectedRoute element={<Redeem />} />} />
+                <Route path="/vouchers" element={<ProtectedRoute element={<Vouchers />} />} />
+                <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </RewardsProvider>
+      </ToastProvider>
+    </AuthProvider>
   );
 }
