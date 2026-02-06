@@ -72,7 +72,7 @@ Resources:
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
         AllowOrigin: "'*'"
       Auth:
-        DefaultAuthorizer: CognitoAuthorizer
+        # DefaultAuthorizer removed to allow OPTIONS to satisfy CORS without Auth
         Authorizers:
           CognitoAuthorizer:
             UserPoolArn: !GetAtt PlasticUserPool.Arn
@@ -95,6 +95,8 @@ Resources:
             RestApiId: !Ref PlasticApi
             Path: /donate
             Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
     Metadata:
       BuildMethod: makefile
 
@@ -116,6 +118,8 @@ Resources:
             RestApiId: !Ref PlasticApi
             Path: /admin/award-points
             Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
     Metadata:
       BuildMethod: makefile
 
