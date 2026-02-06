@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getAssetPath } from '../utils/assets';
 import { processSteps } from '../data/process';
 
 export default function Process() {
@@ -42,7 +43,7 @@ export default function Process() {
                 <article className="process-card fade-in" key={step.id}>
                   <div className="process-number">{String(index + 1).padStart(2, '0')}</div>
                   <div className="process-image">
-                    <img src={step.image} alt={step.title} loading="lazy" />
+                    <img src={getAssetPath(step.image)} alt={step.title} loading="lazy" />
                   </div>
                   <div className="process-content">
                     <h3>{step.title}</h3>

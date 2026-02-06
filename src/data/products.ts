@@ -17,7 +17,7 @@ export const products: Product[] = [
     description:
       'Gạch Mosaic Xanh được sản xuất từ nhựa tái chế thân thiện với môi trường, độ bền cao, chống thấm tốt và phù hợp cho lát nền, ốp tường.',
     price: '160.000đ / viên',
-    images: ['/EcobrickWeb/images/green-mosaic-tile.jpg', '/EcobrickWeb/images/banner.jpg'],
+    images: ['images/green-mosaic-tile.jpg', 'images/banner.jpg'],
   },
   {
     id: 'product-2',
@@ -27,7 +27,7 @@ export const products: Product[] = [
     description:
       'EcoTerrazzo Panel mang lại vẻ đẹp tự nhiên và tinh tế với hiệu ứng terrazzo độc đáo, phù hợp cho nhiều phong cách kiến trúc bền vững.',
     price: '180.000đ / viên',
-    images: ['/EcobrickWeb/images/ecoterrazzo-panel.jpg', '/EcobrickWeb/images/hdpe.jpg'],
+    images: ['images/ecoterrazzo-panel.jpg', 'images/hdpe.jpg'],
   },
   {
     id: 'product-3',
@@ -37,6 +37,6 @@ export const products: Product[] = [
     description:
       'Gạch Hexa giúp tối ưu kết cấu lắp đặt, tăng độ bền và tính thẩm mỹ, phù hợp cho khu vực sinh hoạt ngoài trời và công trình xanh.',
     price: '140.000đ / viên',
-    images: ['/EcobrickWeb/images/hdpe.jpg', '/EcobrickWeb/images/banner.jpg'],
+    images: ['images/hdpe.jpg', 'images/banner.jpg'],
   },
 ];

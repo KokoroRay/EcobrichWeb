@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { getAssetPath } from '../utils/assets';
 import { useEffect } from 'react';
 import { products } from '../data/products';
 
@@ -42,7 +43,7 @@ export default function Home() {
           </div>
         </div>
         <div className="hero-right">
-          <img src="/EcobrickWeb/images/banner.jpg" alt="Gạch lát từ rác nhựa" loading="lazy" />
+          <img src={getAssetPath('images/banner.jpg')} alt="Gạch lát từ rác nhựa" loading="lazy" />
         </div>
       </section>
 
@@ -54,7 +55,7 @@ export default function Home() {
           <div className="product-list">
             {products.map((product, index) => (
               <article className="card product-card fade-in" key={product.id} style={{ transitionDelay: `${index * 0.1}s` }}>
-                <img src={product.images[0]} alt={product.name} loading="lazy" />
+                <img src={getAssetPath(product.images[0])} alt={product.name} loading="lazy" />
                 <div className="card-body">
                   <h3>{product.name}</h3>
                   <p>{product.summary}</p>

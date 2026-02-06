@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { getAssetPath } from '../utils/assets';
 
 export default function About() {
   useEffect(() => {
@@ -43,7 +44,7 @@ export default function About() {
             </p>
           </div>
           <div className="about-image slide-right">
-            <img src="/EcobrickWeb/images/banner.jpg" alt="Ecobrick giới thiệu" loading="lazy" />
+            <img src={getAssetPath('images/banner.jpg')} alt="Ecobrick giới thiệu" loading="lazy" />
           </div>
         </div>
       </section>
@@ -52,7 +53,7 @@ export default function About() {
       <section className="vision-section section-light">
         <div className="vision-container">
           <div className="vision-image slide-left">
-            <img src="/EcobrickWeb/images/ecoterrazzo-panel.jpg" alt="Tầm nhìn Ecobrick" loading="lazy" />
+            <img src={getAssetPath('images/ecoterrazzo-panel.jpg')} alt="Tầm nhìn Ecobrick" loading="lazy" />
           </div>
           <div className="vision-text slide-right">
             <h2 className="section-title left">TẦM NHÌN</h2>
@@ -85,7 +86,7 @@ export default function About() {
             </p>
           </div>
           <div className="mission-image slide-right">
-            <img src="/images/HDPE.jpg" alt="Sứ mệnh Ecobrick" loading="lazy" />
+            <img src={getAssetPath('images/hdpe.jpg')} alt="Sứ mệnh Ecobrick" loading="lazy" />
           </div>
         </div>
       </section>
