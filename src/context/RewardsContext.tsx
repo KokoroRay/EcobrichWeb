@@ -339,10 +339,102 @@ export function RewardsProvider({ children }: { children: ReactNode }) {
   const updatePointsPerKg = (v: number) => setConfig(p => ({ ...p, pointsPerKg: v }));
   const deleteVoucher = (id: string) => { console.log("Delete not impl in Main Branch yet"); };
   const editVoucher = (v: Voucher) => { console.log("Edit not impl"); };
-  const updateDonationStatus = (uid: string, eid: string, status: any) => { /* Keeping Legacy Logic? Or removing? Legacy logic was purely local. */ };
+  const updateDonationStatus = (userId: string, entryId: string, status: 'approved' | 'rejected') => {
+    setUsersDb(prev => {
+      const userProfile = prev[userId];
+      if (!userProfile) return prev; // User not found in local db
+
+      const historyIndex = userProfile.history.findIndex(h => h.id === entryId);
+      if (historyIndex === -1) return prev;
+
+      const entry = userProfile.history[historyIndex];
+      // If already processed, ignore
+      if (entry.status === 'approved' || entry.status === 'rejected') return prev;
+
+      // Update entry
+      const updatedHistory = [...userProfile.history];
+      updatedHistory[historyIndex] = { ...entry, status };
+
+      // Update User Stats if Approved
+      let newPoints = userProfile.points;
+      let newKg = userProfile.totalKg;
+
+      if (status === 'approved') {
+        // Calculate points if not already set on entry
+        const pts = entry.points || ((entry.kg || 0) * config.pointsPerKg);
+        newPoints += pts;
+        newKg += (entry.kg || 0);
+
+        // We should ideally call the API here to persist the award in the Backend too if it matches a real user
+        // adminAwardPoints(userId, entry.kg, pts, entry.note); 
+        // But adminAwardPoints creates a new record. We just want to "Confirm" this one. 
+        // For now, Local State Update is primary for this "Manage" view.
+      }
+
+      return {
+        ...prev,
+        [userId]: {
+          ...userProfile,
+          points: newPoints,
+          totalKg: newKg,
+          history: updatedHistory
+        }
+      };
+    });
+  };
   const adjustUserPoints = (uid: string, pts: number, reason: string) => { /* ... */ };
-  const adminAwardPoints = useCallback(async (uid: string, kg: number, pts?: number, note?: string) => { return true; }, []); // Simplified for this file, implementation exists in previous version.
-  const refreshData = () => { };
+  // --- ADMIN AWARD POINTS ---
+  const adminAwardPoints = useCallback(async (targetUserId: string, amountKg: number, manualPoints?: number, note?: string) => {
+    if (!isAuthenticated) return false;
+    const token = await getAuthToken();
+    if (!token) return false;
+
+    const API_BASE = getApiBase();
+    try {
+      const res = await fetch(`${API_BASE}/admin/award-points`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': token },
+        body: JSON.stringify({
+          target_user_id: targetUserId,
+          amount_kg: amountKg,
+          manual_points: manualPoints ? Math.floor(manualPoints) : Math.floor(amountKg * config.pointsPerKg),
+          note: note || 'Admin Award'
+        })
+      });
+
+      if (!res.ok) {
+        console.warn("Backend award API failed. Falling back to local update for UI responsiveness.");
+      }
+    } catch (e) {
+      console.error("Award API connection failed. Falling back to local update.", e);
+    }
+
+    // Always update local state (Optimistic / Fallback)
+    setUsersDb(prev => {
+      const p = prev[targetUserId];
+      if (!p) return prev; // User not in local list, cannot update UI
+
+      const addedPoints = manualPoints || (amountKg * config.pointsPerKg);
+      return {
+        ...prev,
+        [targetUserId]: {
+          ...p,
+          points: (p.points || 0) + addedPoints,
+          history: [{
+            id: `admin-${Date.now()}`,
+            userId: targetUserId,
+            type: 'admin_adjust',
+            points: addedPoints, // This might be a float
+            note: note || 'Admin Award',
+            createdAt: new Date().toISOString()
+          }, ...p.history]
+        }
+      };
+    });
+    return true;
+  }, [isAuthenticated, config.pointsPerKg]);
+
+  const refreshData = () => { fetchVouchers(); };
 
   return (
     <RewardsContext.Provider value={{

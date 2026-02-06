@@ -4,6 +4,8 @@ import { useCart } from '../context/CartContext';
 import { useState } from 'react';
 import { useRewards } from '../context/RewardsContext';
 
+import { getAssetPath } from '../utils/assets';
+
 export default function Cart() {
     const { items, updateQuantity, removeFromCart, subtotal, discountAmount, total, appliedVoucher, applyVoucher, removeVoucher } = useCart();
     const { claimedVouchers } = useRewards(); // User's My Vouchers
@@ -50,7 +52,7 @@ export default function Cart() {
                     <div className="cart-list" style={{ background: 'white', borderRadius: '16px', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.05)' }}>
                         {items.map(item => (
                             <div key={item.productId} style={{ display: 'flex', gap: '1.5rem', paddingBottom: '1.5rem', marginBottom: '1.5rem', borderBottom: '1px solid #f1f5f9' }}>
-                                <img src={item.product.image} alt={item.product.name} style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px', background: '#f1f5f9' }} />
+                                <img src={getAssetPath(item.product.image)} alt={item.product.name} style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '8px', background: '#f1f5f9' }} />
 
                                 <div style={{ flex: 1 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
