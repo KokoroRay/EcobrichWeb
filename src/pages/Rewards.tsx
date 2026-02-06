@@ -8,23 +8,24 @@ import '../styles/dashboard.css';
 export default function Rewards() {
   const { points, config, history, addDonation } = useRewards();
   const { user, userAttributes } = useAuth();
-  const [kg, setKg] = useState(1);
+  const [kg, setKg] = useState<string>('1');
   const [note, setNote] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const earned = kg * config.pointsPerKg;
+  const parsedKg = parseFloat(kg) || 0;
+  const earned = parsedKg * config.pointsPerKg;
 
   const handleSubmit = async () => {
-    if (kg <= 0) return;
+    if (parsedKg <= 0) return;
     setIsSubmitting(true);
 
     // addDonation internally handles authentication check and API call
     // It returns true on success, false on failure
-    const success = await addDonation(kg, note || 'Quyên góp nhựa tại điểm thu gom');
+    const success = await addDonation(parsedKg, note || 'Quyên góp nhựa tại điểm thu gom');
 
     if (success) {
       setNote('');
-      setKg(1);
+      setKg('1');
     }
 
     setIsSubmitting(false);
@@ -98,7 +99,7 @@ export default function Rewards() {
             </div>
 
             {/* QR Code Card */}
-            <div className="profile-card" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+            <div className="profile-card qr-card" style={{ marginTop: '1.5rem', textAlign: 'center' }}>
               <h4 style={{ marginBottom: '1rem', color: '#1e293b' }}>Mã thành viên của bạn</h4>
               <div style={{ background: 'white', padding: '10px', display: 'inline-block', borderRadius: '8px', border: '1px solid #eee' }}>
                 <QRCodeCanvas value={userAttributes?.sub || user?.username || 'unknown'} size={150} />
@@ -138,7 +139,7 @@ export default function Rewards() {
                   step="0.1"
                   className="form-field"
                   value={kg}
-                  onChange={(e) => setKg(Number(e.target.value))}
+                  onChange={(e) => setKg(e.target.value)}
                 />
               </div>
 
