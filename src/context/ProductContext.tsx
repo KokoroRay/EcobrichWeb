@@ -10,7 +10,7 @@ const initialProducts: Product[] = [
         price: 45000,
         description: 'Gạch Mosaic được làm từ nhựa tái chế 100%, có độ bền cao, chống thấm nước, phù hợp trang trí nội ngoại thất. Màu xanh tự nhiên từ nhựa HDPE.',
         image: 'images/green-mosaic-tile.jpg',
-        category: 'Standard',
+        category: 'Vật liệu xây dựng',
         stock: 120,
         sizes: ['15x15cm', '30x30cm'],
         specifications: {
@@ -28,7 +28,7 @@ const initialProducts: Product[] = [
         price: 250000,
         description: 'Tấm ốp tường phong cách Terrazzo hiện đại. Sản phẩm được ép nhiệt cao tần từ nhựa phế thải, tạo nên họa tiết độc bản cho mỗi tấm.',
         image: 'images/ecoterrazzo-panel.jpg',
-        category: 'Premium',
+        category: 'Vật liệu xây dựng',
         stock: 45,
         sizes: ['60x60cm', '120x60cm'],
         specifications: {
