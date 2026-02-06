@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { CartItem, Product } from '../types/cart';
 import { Voucher } from '../types/rewards';
+import { useAuth } from './AuthContext';
 
 type CartContextType = {
     items: CartItem[];
@@ -22,16 +23,31 @@ type CartContextType = {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-    const [items, setItems] = useState<CartItem[]>(() => {
-        const stored = localStorage.getItem('ecobrick_cart');
-        return stored ? JSON.parse(stored) : [];
-    });
+    const { user, isAuthenticated } = useAuth();
+    const userId = isAuthenticated && user ? (user.username || user.id) : 'guest';
+    const storageKey = `ecobrick_cart_${userId}`;
 
+    const [items, setItems] = useState<CartItem[]>([]);
     const [appliedVoucher, setAppliedVoucher] = useState<Voucher | null>(null);
 
+    // Load cart on user change
     useEffect(() => {
-        localStorage.setItem('ecobrick_cart', JSON.stringify(items));
-    }, [items]);
+        const stored = localStorage.getItem(storageKey);
+        if (stored) {
+            try {
+                setItems(JSON.parse(stored));
+            } catch {
+                setItems([]);
+            }
+        } else {
+            setItems([]);
+        }
+        setAppliedVoucher(null); // Reset voucher on user switch
+    }, [userId, storageKey]);
+
+    useEffect(() => {
+        localStorage.setItem(storageKey, JSON.stringify(items));
+    }, [items, storageKey]);
 
     const addToCart = (product: Product, quantity = 1) => {
         setItems(prev => {

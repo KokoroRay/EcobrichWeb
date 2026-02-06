@@ -123,6 +123,70 @@ Resources:
     Metadata:
       BuildMethod: makefile
 
+  VouchersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: bootstrap
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlasticDbTable
+      Events:
+        GetVouchersApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PlasticApi
+            Path: /vouchers
+            Method: GET
+            # Public access to view available vouchers? Yes for now. Or Auth optional?
+            # User wants to perform exchange, so listing needs to be available.
+            # Let's make it authenticated to be safe, or open. 
+            # Prompt implied integration with system. Let's start with Auth required for simplicity in consistent API.
+            Auth:
+              Authorizer: CognitoAuthorizer
+        PostVouchersApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PlasticApi
+            Path: /vouchers
+            Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
+        OptionsVouchersApi:
+          Type: Api
+          Properties:
+             RestApiId: !Ref PlasticApi
+             Path: /vouchers
+             Method: OPTIONS
+    Metadata:
+      BuildMethod: makefile
+
+  RedeemFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: bootstrap
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref PlasticDbTable
+      Events:
+        RedeemApi:
+          Type: Api
+          Properties:
+            RestApiId: !Ref PlasticApi
+            Path: /redeem
+            Method: POST
+            Auth:
+              Authorizer: CognitoAuthorizer
+        OptionsRedeemApi:
+            Type: Api
+            Properties:
+               RestApiId: !Ref PlasticApi
+               Path: /redeem
+               Method: OPTIONS
+    Metadata:
+      BuildMethod: makefile
+
 Outputs:
   ApiEndpoint:
     Description: "API Gateway endpoint URL"

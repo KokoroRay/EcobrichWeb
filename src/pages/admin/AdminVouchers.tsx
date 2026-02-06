@@ -10,6 +10,8 @@ export default function AdminVouchers() {
     const [voucherTitle, setVoucherTitle] = useState('Voucher mới');
     const [voucherPoints, setVoucherPoints] = useState<string>('200');
     const [voucherDiscount, setVoucherDiscount] = useState('8%');
+    const [voucherCode, setVoucherCode] = useState('');
+    const [voucherExpiry, setVoucherExpiry] = useState('');
     const [editingId, setEditingId] = useState<string | null>(null);
 
     const handleUpdateConfig = () => {
@@ -20,7 +22,7 @@ export default function AdminVouchers() {
         }
     };
 
-    const handleSaveVoucher = () => {
+    const handleSaveVoucher = async () => {
         const points = Number(voucherPoints) || 0;
         if (points <= 0) {
             alert("Điểm yêu cầu phải lớn hơn 0");
@@ -28,34 +30,38 @@ export default function AdminVouchers() {
         }
 
         if (editingId) {
-            // Edit Mode
+            // Edit Mode - Only updates local state via context currently (pending backend impl)
             const existing = availableVouchers.find(v => v.id === editingId);
             if (existing) {
                 editVoucher({
                     ...existing,
                     title: voucherTitle,
                     discount: voucherDiscount,
-                    pointsRequired: points
+                    pointsRequired: points,
+                    code: voucherCode || existing.code,
+                    expiresAt: voucherExpiry || existing.expiresAt
                 });
-                alert("Đã cập nhật voucher!");
+                alert("Đã cập nhật voucher (Lưu ý: Chức năng Edit chưa đồng bộ DB)!");
             }
             setEditingId(null);
         } else {
-            // Add Mode
-            addVoucher({
+            // Add Mode - Calls API
+            const success = await addVoucher({
                 title: voucherTitle,
-                code: `ADMIN-${Date.now().toString().slice(-4)}`,
+                code: voucherCode, // Empty = Random
                 discount: voucherDiscount,
                 pointsRequired: points,
-                expiresAt: '2026-12-31',
+                expiresAt: voucherExpiry || '2026-12-31',
             });
-            alert("Đã thêm voucher mới!");
+            if (success) alert("Đã thêm voucher mới!");
         }
 
         // Reset Form
         setVoucherTitle('Voucher mới');
         setVoucherPoints('200');
         setVoucherDiscount('8%');
+        setVoucherCode('');
+        setVoucherExpiry('');
     };
 
     const startEdit = (voucher: Voucher) => {
@@ -63,6 +69,8 @@ export default function AdminVouchers() {
         setVoucherTitle(voucher.title);
         setVoucherPoints(voucher.pointsRequired.toString());
         setVoucherDiscount(voucher.discount);
+        setVoucherCode(voucher.code);
+        setVoucherExpiry(voucher.expiresAt);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -71,6 +79,8 @@ export default function AdminVouchers() {
         setVoucherTitle('Voucher mới');
         setVoucherPoints('200');
         setVoucherDiscount('8%');
+        setVoucherCode('');
+        setVoucherExpiry('');
     };
 
     const handleDelete = (id: string) => {
@@ -125,6 +135,18 @@ export default function AdminVouchers() {
                             className="form-field"
                             value={voucherTitle}
                             onChange={(event) => setVoucherTitle(event.target.value)}
+                            placeholder="Ví dụ: Giảm 20% hạt nhựa"
+                        />
+                    </div>
+
+                    <div className="form-input-group">
+                        <label>Mã Voucher (Để trống để tự tạo)</label>
+                        <input
+                            type="text"
+                            className="form-field"
+                            value={voucherCode}
+                            onChange={(event) => setVoucherCode(event.target.value.toUpperCase())}
+                            placeholder="Tự tạo (VD: SALE50) hoặc Random"
                         />
                     </div>
 
@@ -146,8 +168,19 @@ export default function AdminVouchers() {
                                 className="form-field"
                                 value={voucherDiscount}
                                 onChange={(event) => setVoucherDiscount(event.target.value)}
+                                placeholder="VD: 10% hoặc 50k"
                             />
                         </div>
+                    </div>
+
+                    <div className="form-input-group">
+                        <label>Hạn sử dụng</label>
+                        <input
+                            type="date"
+                            className="form-field"
+                            value={voucherExpiry}
+                            onChange={(e) => setVoucherExpiry(e.target.value)}
+                        />
                     </div>
 
                     <div style={{ textAlign: 'right', marginTop: '1rem', display: 'flex', justifyContent: 'flex-end', gap: '0.5rem' }}>
