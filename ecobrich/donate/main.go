@@ -95,8 +95,8 @@ func handleRequest(ctx context.Context, request events.APIGatewayProxyRequest) (
 
 	// 5. Trả về thành công
 	resBody := ResponseBody{
-		Message:      "Quyên góp thành công",
-		PointsEarned: points,
+		Message:       "Quyên góp thành công và đang chờ duyệt",
+		PointsPending: points,
 	}
 	jsonBody, _ := json.Marshal(resBody)
 
