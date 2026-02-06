@@ -10,6 +10,7 @@ import Process from './pages/Process';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
 import HowItWorks from './pages/HowItWorks';
 import Rewards from './pages/Rewards';
 import Redeem from './pages/Redeem';
@@ -106,6 +107,7 @@ export default function App() {
             <Route path="/how-it-works" element={<HowItWorks />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
             
             {/* Protected Routes */}
             <Route path="/rewards" element={<ProtectedRoute element={<Rewards />} />} />
