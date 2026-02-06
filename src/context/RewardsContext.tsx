@@ -129,7 +129,17 @@ export function RewardsProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`${API_BASE}/vouchers`, { headers });
       if (res.ok) {
         const data = await res.json();
-        setAvailableVouchers(data || []);
+        // Map snake_case from Backend to camelCase for Frontend
+        const mapped = Array.isArray(data) ? data.map((v: any) => ({
+          id: v.id,
+          title: v.title,
+          discount: v.discount,
+          code: v.code,
+          status: v.status,
+          pointsRequired: v.points_required || v.pointsRequired,
+          expiresAt: v.expires_at || v.expiresAt
+        })) : [];
+        setAvailableVouchers(mapped);
       }
     } catch (e) {
       console.error("Fetch vouchers failed", e);
