@@ -20,6 +20,7 @@ import Admin from './pages/Admin';
 import TestRole from './pages/TestRole';
 import Cart from './pages/Cart';
 import History from './pages/History';
+import Profile from './pages/Profile';
 import { RewardsProvider } from './context/RewardsContext';
 import { AuthProvider } from './context/AuthContext';
 import { ToastProvider } from './context/ToastContext';
@@ -85,6 +86,7 @@ export default function App() {
                     <Route path="/test-role" element={<ProtectedRoute><TestRole /></ProtectedRoute>} />
 
                     {/* Protected Routes */}
+                    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
                     <Route path="/rewards" element={<ProtectedRoute><Rewards /></ProtectedRoute>} />
                     <Route path="/redeem" element={<ProtectedRoute><Redeem /></ProtectedRoute>} />
                     <Route path="/vouchers" element={<ProtectedRoute><Vouchers /></ProtectedRoute>} />

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useProducts } from '../context/ProductContext';
+import { getAssetPath } from '../utils/assets';
 
 export default function Products() {
   const { products } = useProducts();
@@ -15,7 +16,7 @@ export default function Products() {
             {products.map((product) => (
               <article className="card" key={product.id}>
                 <img
-                  src={product.image || '/assets/ecobrick-std.jpg'}
+                  src={getAssetPath(product.image || 'images/ecobrick-std.jpg')}
                   alt={product.name}
                   style={{ background: '#e2e8f0' }}
                 />
