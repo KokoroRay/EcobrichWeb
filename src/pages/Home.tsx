@@ -29,21 +29,26 @@ export default function Home() {
     <div className="page content">
       <section className="hero">
         <div className="hero-left">
-          <h1>
+          <h1 className="animate-slide-up">
             GẠCH TÁI CHẾ <span className="highlight">ECOBRICK</span>
           </h1>
-          <h2>Dự án thử nghiệm sản xuất gạch từ nhựa tái chế</h2>
-          <p className="lead">
+          <h2 className="animate-slide-up delay-100">Dự án thử nghiệm sản xuất gạch từ nhựa tái chế</h2>
+          <p className="lead animate-slide-up delay-200">
             Chúng tôi tận dụng rác thải nhựa, tái chế thành vật liệu xây dựng bền – đẹp – thân thiện với môi trường.
           </p>
-          <div className="hero-cta">
+          <div className="hero-cta animate-slide-up delay-300">
             <Link to="/products" className="btn primary">
               Khám phá sản phẩm →
             </Link>
           </div>
         </div>
         <div className="hero-right">
-          <img src={getAssetPath('images/banner.jpg')} alt="Gạch lát từ rác nhựa" loading="lazy" />
+          <img
+            src={getAssetPath('images/banner.jpg')}
+            alt="Gạch lát từ rác nhựa"
+            loading="lazy"
+            className="animate-float"
+          />
         </div>
       </section>
 
